@@ -17,7 +17,7 @@ public static partial class MauiProgram
                 fonts.AddFont("OpenSans-SemiBold.ttf", "OpenSansSemiBold");
             });
 
-        builder.ConfigureMauiHandlers(handlers => { handlers.AddHandler<AnimatedComputeShaderView, AnimatedComputeShaderViewHandler>(); });
+        builder.ConfigureMauiHandlers(handlers => { handlers.AddHandler<ComputeShaderView, ComputeShaderViewHandler>(); });
 
         return builder.Build();
     }

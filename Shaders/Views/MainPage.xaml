@@ -17,17 +17,11 @@
             ItemDisplayBinding="{Binding Name, x:DataType=compute:GraphicsDevice}"
             ItemsSource="{Binding GraphicsDevices}"
             SelectedItem="{Binding SelectedGraphicsDevice}" />
-    <StackLayout Grid.Row="1" Orientation="Horizontal">
-      <Button Command="{Binding PickImageCommand}" Text="Choose File" />
-      <Label FontAttributes="Italic"
-             Text="{Binding ImageSource}"
-             TextColor="LightGray" />
-    </StackLayout>
-    <controls:AnimatedComputeShaderView Grid.Row="2"
-                                        GraphicsDevice="{Binding SelectedGraphicsDevice}"
-                                        HorizontalOptions="Fill"
-                                        ShaderRunner="{Binding ShaderRunner}"
-                                        VerticalOptions="Fill" />
+    <controls:ComputeShaderView Grid.Row="2"
+                                GraphicsDevice="{Binding SelectedGraphicsDevice}"
+                                HorizontalOptions="Fill"
+                                ShaderRunner="{Binding ShaderRunner}"
+                                VerticalOptions="Fill" />
   </Grid>
 
 </ContentPage>

@@ -3,19 +3,25 @@ namespace Shaders.Controls;
 using ComputeSharp;
 using ComputeSharp.WinUI;
 
-public sealed class AnimatedComputeShaderView : View
+public sealed class ComputeShaderView : View
 {
     #region Fields
 
     public static readonly BindableProperty ShaderRunnerProperty = BindableProperty.Create(
         nameof(ShaderRunner),
         typeof(IShaderRunner),
-        typeof(AnimatedComputeShaderView));
+        typeof(ComputeShaderView));
 
     public static readonly BindableProperty GraphicsDeviceProperty = BindableProperty.Create(
         nameof(GraphicsDevice),
         typeof(GraphicsDevice),
-        typeof(AnimatedComputeShaderView));
+        typeof(ComputeShaderView));
+
+    #endregion
+
+    #region Events
+
+    internal event EventHandler? FrameRequested;
 
     #endregion
 
@@ -32,6 +38,12 @@ public sealed class AnimatedComputeShaderView : View
         get => (GraphicsDevice?)this.GetValue(GraphicsDeviceProperty);
         set => this.SetValue(GraphicsDeviceProperty, value);
     }
+
+    #endregion
+
+    #region Methods
+
+    public void RequestFrame() => this.FrameRequested?.Invoke(this, EventArgs.Empty);
 
     #endregion
 }

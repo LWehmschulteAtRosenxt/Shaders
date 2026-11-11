@@ -59,4 +59,8 @@
         <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="10.*" Condition="'$(Configuration)' == 'Debug'" />
         <PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
     </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Compute\Compute.csproj" />
+    </ItemGroup>
 </Project>

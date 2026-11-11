@@ -12,6 +12,8 @@ public readonly partial struct HelloWorldShader(
 
     public float4 Execute()
     {
+
+
         var uv = ThreadIds.Normalized.XY;
         var sourceColor = source.Sample(uv);
 
