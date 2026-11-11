@@ -1,16 +1,15 @@
 ﻿namespace Shaders.Views;
 
-using ComputeSharp.WinUI;
+using Shaders.ViewModels;
 
 public partial class MainPage : ContentPage
 {
     #region Constructors
 
-    public MainPage()
+    public MainPage(MainPageViewModel viewModel)
     {
         this.InitializeComponent();
-
-        this.ShaderView.ShaderRunner = new ShaderRunner<HelloWorldShader>(static elapsed => new HelloWorldShader((float)elapsed.TotalSeconds));
+        this.BindingContext = viewModel;
     }
 
     #endregion

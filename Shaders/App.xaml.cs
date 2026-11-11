@@ -1,5 +1,7 @@
 ﻿namespace Shaders;
 
+using Shaders.ViewModels;
+
 public partial class App : Application
 {
     #region Constructors
@@ -17,7 +19,7 @@ public partial class App : Application
 
     protected override Window CreateWindow(IActivationState? activationState)
     {
-        var window = new Window(new MainPage());
+        var window = new Window(new MainPage(new MainPageViewModel()));
         window.Title = "Shaders";
         return window;
     }
