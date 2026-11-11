@@ -17,7 +17,12 @@
             ItemDisplayBinding="{Binding Name, x:DataType=compute:GraphicsDevice}"
             ItemsSource="{Binding GraphicsDevices}"
             SelectedItem="{Binding SelectedGraphicsDevice}" />
-    <controls:ComputeShaderView Grid.Row="2"
+    <Slider Grid.Row="1"
+            Maximum="10"
+            Minimum="0"
+            Value="{Binding NeighborDistance}" />
+    <controls:ComputeShaderView x:Name="shaderView"
+                                Grid.Row="2"
                                 GraphicsDevice="{Binding SelectedGraphicsDevice}"
                                 HorizontalOptions="Fill"
                                 ShaderRunner="{Binding ShaderRunner}"

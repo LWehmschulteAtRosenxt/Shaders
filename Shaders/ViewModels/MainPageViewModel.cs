@@ -20,7 +20,20 @@ public sealed class MainPageViewModel : INotifyPropertyChanged
         set => this.NotifyPropertyChanged(this.PropertyChanged, ref field, value);
     } = GraphicsDevice.GetDefault();
 
-    public IShaderRunner? ShaderRunner { get; } = new CustomShaderRunner();
+    public CustomShaderRunner? ShaderRunner { get; } = new CustomShaderRunner()
+                                                  {
+                                                      NeighborDistance = 0
+                                                  };
+
+    public double NeighborDistance
+    {
+        get;
+        set
+        {
+            this.ShaderRunner?.NeighborDistance = (int)value;
+            this.NotifyPropertyChanged(this.PropertyChanged, ref field, value);
+        }
+    }
 
     #endregion
 

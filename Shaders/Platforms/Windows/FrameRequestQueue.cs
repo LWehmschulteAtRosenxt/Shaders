@@ -5,16 +5,16 @@ using ComputeSharp.WinUI;
 internal sealed class FrameRequestQueue : IFrameRequestQueue
 {
     private readonly SemaphoreSlim pendingFrame = new(0, 1);
+    private readonly Lock requestLock = new();
 
     public void RequestFrame()
     {
-        try
+        lock (this.requestLock)
         {
-            this.pendingFrame.Release();
-        }
-        catch (SemaphoreFullException)
-        {
-            // A pending request already covers the latest state.
+            if (this.pendingFrame.CurrentCount == 0)
+            {
+                this.pendingFrame.Release();
+            }
         }
     }
 

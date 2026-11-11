@@ -10,6 +10,14 @@ public partial class MainPage : ContentPage
     {
         this.InitializeComponent();
         this.BindingContext = viewModel;
+
+        viewModel.PropertyChanged += (sender, args) =>
+        {
+            if (args.PropertyName == nameof(viewModel.NeighborDistance))
+            {
+                this.shaderView.RequestFrame();
+            }
+        };
     }
 
     #endregion
