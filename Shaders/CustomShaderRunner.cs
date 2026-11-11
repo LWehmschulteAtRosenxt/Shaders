@@ -17,7 +17,7 @@ public class CustomShaderRunner : IShaderRunner
         using var context = device.CreateComputeContext();
 
         context.For(checked(width * height), new RandomShader(random));
-        context.For(checked(width * height), new ToRgb(1, 0, 1, random, rgb));
+        context.For(checked(width * height), new ToRgb(random, rgb));
         context.ForEach(texture, new DisplayShader(rgb, width));
 
         return true;

@@ -2,6 +2,27 @@ namespace Compute;
 
 using ComputeSharp;
 
+public static class ComputePipeline
+{
+    #region Methods
+
+    public static void ToFloat3(
+        this GraphicsDevice device,
+        ReadWriteBuffer<float> gpuBuffer,
+        ReadWriteBuffer<float3> gpuOutputBuffer)
+
+    {
+        device.For(gpuBuffer.Length, new ToRgb(gpuBuffer, gpuOutputBuffer));
+    }
+
+    public static void ZToCos(this GraphicsDevice device, ReadOnlyBuffer<float> gpuBuffer, ReadWriteBuffer<float> gpuOutputBuffer)
+    {
+        device.For(gpuBuffer.Length, new ZToCosShader(gpuBuffer, gpuOutputBuffer));
+    }
+
+    #endregion
+}
+
 [ThreadGroupSize(DefaultThreadGroupSizes.X)]
 [GeneratedComputeShaderDescriptor]
 public readonly partial struct ZToCosShader(ReadOnlyBuffer<float> input, ReadWriteBuffer<float> output) : IComputeShader
@@ -20,17 +41,19 @@ public readonly partial struct ZToCosShader(ReadOnlyBuffer<float> input, ReadWri
 
 [ThreadGroupSize(DefaultThreadGroupSizes.X)]
 [GeneratedComputeShaderDescriptor]
-public readonly partial struct ToRgb(float scaleR, float scaleB, float scaleG, ReadWriteBuffer<float> input, ReadWriteBuffer<float3> output) : IComputeShader
+public readonly partial struct ToRgb(ReadWriteBuffer<float> input, ReadWriteBuffer<float3> output) : IComputeShader
 {
     #region Methods
 
     public void Execute()
     {
-        int index = ThreadIds.X;
+        var index = ThreadIds.X;
+        var value = input[index];
 
-        output[index].R = scaleR * input[index];
-        output[index].G = scaleG * input[index];
-        output[index].B = scaleB * input[index];
+        float3 phase = new(0f, 0.33f, 0.67f);
+
+        output[index] = 0.5f + 0.5f *
+            Hlsl.Cos(6.2831853f * (value + phase));
     }
 
     #endregion
