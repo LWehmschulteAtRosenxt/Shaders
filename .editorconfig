@@ -968,3 +968,6 @@ dotnet_diagnostic.SA1651.severity = none
 
 # SA1652: EnableXmlDocumentationOutput
 dotnet_diagnostic.SA1652.severity = none
+
+
+dotnet_diagnostic.CA1416.severity = silent

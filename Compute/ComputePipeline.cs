@@ -25,6 +25,29 @@ public static class ComputePipeline
 
 [ThreadGroupSize(DefaultThreadGroupSizes.X)]
 [GeneratedComputeShaderDescriptor]
+public readonly partial struct ReduceShader(int binSize, ReadOnlyBuffer<float> input, ReadWriteBuffer<float> output) : IComputeShader
+{
+    #region Methods
+
+    public void Execute()
+    {
+        int index = ThreadIds.X;
+
+        float sum = 0f;
+        for (int i = 0; i < binSize; i++)
+        {
+            var inputIndex = (index * binSize) + i;
+            sum += (1f / binSize) * input[inputIndex];
+        }
+
+        output[index] = sum;
+    }
+
+    #endregion
+}
+
+[ThreadGroupSize(DefaultThreadGroupSizes.X)]
+[GeneratedComputeShaderDescriptor]
 public readonly partial struct ZToCosShader(ReadOnlyBuffer<float> input, ReadWriteBuffer<float> output) : IComputeShader
 {
     #region Methods

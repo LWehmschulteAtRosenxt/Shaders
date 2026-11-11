@@ -39,6 +39,58 @@ public class ComputePipelineTests : IDisposable
     }
 
     [Test]
+    public void CanAllocate()
+    {
+        // Arrange
+        var initialX = 10_000;
+        var initialY = 9_000;
+
+        // Act
+        for (int i = 0; i < 10000; i++)
+        {
+            var size = (initialX + i) * initialY;
+            var actioalX = new float[size];
+        }
+        
+        
+        // Assert
+    }
+
+    [Test]
+    public void ReduceShader_Is_Correct()
+    {
+        // Arrange
+        int length = 1024;
+        int binSize = 4;
+        float[] input = GenerateRandomFloatArray(length);
+        float[] expected = new float[length / binSize];
+
+        for (int i = 0; i < expected.Length; i++)
+        {
+            float sum = 0f;
+            for (int j = 0; j < binSize; j++)
+            {
+                sum += (1f / binSize) * input[i * binSize + j];
+            }
+            expected[i] = sum;
+        }
+
+        using ReadOnlyBuffer<float> gpuInput = device.AllocateReadOnlyBuffer(input);
+        using ReadWriteBuffer<float> gpuOutput = device.AllocateReadWriteBuffer<float>(expected.Length);
+
+        // Act
+        this.device.For(gpuOutput.Length, new ReduceShader(binSize, gpuInput, gpuOutput));
+
+        // Assert
+        float[] actual = gpuOutput.ToArray();
+        Assert.That(actual.Length, Is.EqualTo(expected.Length));
+        for (int i = 0; i < expected.Length; i++)
+        {
+            Assert.That(actual[i], Is.EqualTo(expected[i]).Within(1e-3), $"Mismatch at index {i}: expected {expected[i]}, got {actual[i]}");;
+        }
+    }
+    
+    [Test]
     public void ZToCosShader_Is_Correct()
     {
         // Arrange
