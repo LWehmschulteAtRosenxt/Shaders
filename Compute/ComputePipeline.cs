@@ -6,27 +6,30 @@ public static class ComputePipeline
 {
     #region Methods
 
-    public static void Reduce(this GraphicsDevice device, ReadWriteBuffer<float> gpuBuffer, ReadWriteBuffer<float> gpuOutputBuffer, int binSize)
+    extension(ref ComputeContext context)
     {
-        device.For(gpuOutputBuffer.Length, new ReduceShader(binSize, gpuBuffer, gpuOutputBuffer));
+        public void Reduce(ReadWriteBuffer<float> gpuBuffer, ReadWriteBuffer<float> gpuOutputBuffer, int binSize)
+        {
+            context.For(gpuOutputBuffer.Length, new ReduceShader(binSize, gpuBuffer, gpuOutputBuffer));
+        }
+
+        public void ToFloat3(ReadWriteBuffer<float> gpuBuffer, ReadWriteBuffer<float3> gpuOutputBuffer)
+
+        {
+            context.For(gpuBuffer.Length, new ToRgb(gpuBuffer, gpuOutputBuffer));
+        }
+
+        public void ZToCos(ReadOnlyBuffer<float> gpuBuffer, ReadWriteBuffer<float> gpuOutputBuffer)
+        {
+            context.For(gpuBuffer.Length, new ZToCosShader(gpuBuffer, gpuOutputBuffer));
+        }
+
+        public void ToRgb(ReadWriteBuffer<float> gpuBuffer, ReadWriteBuffer<float3> gpuOutputBuffer)
+        {
+            context.For(gpuBuffer.Length, new ToRgb(gpuBuffer, gpuOutputBuffer));
+        }
     }
 
-    public static void ToFloat3(this GraphicsDevice device, ReadWriteBuffer<float> gpuBuffer, ReadWriteBuffer<float3> gpuOutputBuffer)
-
-    {
-        device.For(gpuBuffer.Length, new ToRgb(gpuBuffer, gpuOutputBuffer));
-    }
-
-    public static void ZToCos(this GraphicsDevice device, ReadOnlyBuffer<float> gpuBuffer, ReadWriteBuffer<float> gpuOutputBuffer)
-    {
-        device.For(gpuBuffer.Length, new ZToCosShader(gpuBuffer, gpuOutputBuffer));
-    }
-
-    public static void ToRgb(this GraphicsDevice device, ReadWriteBuffer<float> gpuBuffer, ReadWriteBuffer<float3> gpuOutputBuffer)
-    {
-        device.For(gpuBuffer.Length, new ToRgb(gpuBuffer, gpuOutputBuffer));
-    }
-    
     #endregion
 }
 

@@ -48,8 +48,10 @@ public class ShaderBenchmark
         var gpuInput = device.AllocateReadOnlyBuffer(this.data);
         var gpuIntermediate = device.AllocateReadWriteBuffer<float>(this.data.Length);
         var gpuOutput = device.AllocateReadWriteBuffer<float>(this.output.Length);
-        device.ZToCos(gpuInput, gpuIntermediate);
-        device.Reduce(gpuIntermediate, gpuOutput, scale);
+        var context = device.CreateComputeContext();
+        context.ZToCos(gpuInput, gpuIntermediate);
+        context.Reduce(gpuIntermediate, gpuOutput, scale);
+        context.Dispose();
         _ = gpuOutput.ToArray();
     }
 }

@@ -16,32 +16,29 @@ public class CustomShaderRunner() : IShaderRunner
     public bool TryExecute(IReadWriteNormalizedTexture2D<float4> texture, TimeSpan timespan, object? parameter)
     {
         var scale = 2;
-        var textureDevice = texture.GraphicsDevice;
+        var device = texture.GraphicsDevice;
         var width = texture.Width;
         var height = texture.Height;
 
-        var device = GpuHelper.GetMaxMemoryDevice();
-        if (device is null)
-        {
-            device = textureDevice;
-        }
-
-        var data = GpuHelper.GetInitialData(width * scale, height * scale);
+        var data = GpuHelper.GetInitialData(width * scale, height);
 
         using var initialDataBuffer = device.AllocateReadOnlyBuffer(data);
-        using var intermediat = device.AllocateReadWriteBuffer<float>(checked(width * height));
+        using var intermediat = device.AllocateReadWriteBuffer<float>(checked(width * height * scale));
         using var output = device.AllocateReadWriteBuffer<float>(checked(width * height));
-        ;
+        using var perlinNoise = device.AllocateReadWriteBuffer<float>(checked(width * height));
         using var rgb = device.AllocateReadWriteBuffer<float3>(checked(width * height));
-        using var context = device.CreateComputeContext();
 
-        device.ZToCos(initialDataBuffer, intermediat);
+        var context = device.CreateComputeContext();
+        context.ZToCos(initialDataBuffer, intermediat);
         context.Barrier(intermediat);
-        device.Reduce(intermediat, output, scale);
+        context.Reduce(intermediat, output, scale);
         context.Barrier(output);
-        device.ToRgb(output, rgb);
+        context.For(width, height, new PerlinNoiseShader(this.NeighborDistance, output, perlinNoise));
+        context.Barrier(perlinNoise);
+        context.ToRgb(perlinNoise, rgb);
         context.Barrier(rgb);
         context.ForEach(texture, new DisplayShader(rgb));
+        context.Dispose();
 
         return true;
     }

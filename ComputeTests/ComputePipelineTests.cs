@@ -36,10 +36,10 @@ public class ComputePipelineTests : IDisposable
 
     private float[] GenerateRandomFloatArray(int length, float minValue = -1f, float maxValue = 1f)
     {
-        Random random = new Random();
-        float[] array = new float[length];
+        var random = new Random();
+        var array = new float[length];
 
-        for (int i = 0; i < length; i++)
+        for (var i = 0; i < length; i++)
         {
             array[i] = (float)(random.NextDouble() * (maxValue - minValue) + minValue);
         }
@@ -51,15 +51,15 @@ public class ComputePipelineTests : IDisposable
     public void ReduceShader_Is_Correct()
     {
         // Arrange
-        int length = 1024;
-        int binSize = 4;
-        float[] input = GenerateRandomFloatArray(length);
-        float[] expected = new float[length / binSize];
+        var length = 1024;
+        var binSize = 4;
+        var input = GenerateRandomFloatArray(length);
+        var expected = new float[length / binSize];
 
-        for (int i = 0; i < expected.Length; i++)
+        for (var i = 0; i < expected.Length; i++)
         {
-            float sum = 0f;
-            for (int j = 0; j < binSize; j++)
+            var sum = 0f;
+            for (var j = 0; j < binSize; j++)
             {
                 sum += (1f / binSize) * input[i * binSize + j];
             }
@@ -67,16 +67,16 @@ public class ComputePipelineTests : IDisposable
             expected[i] = sum;
         }
 
-        using ReadWriteBuffer<float> gpuInput = device.AllocateReadWriteBuffer(input);
-        using ReadWriteBuffer<float> gpuOutput = device.AllocateReadWriteBuffer<float>(expected.Length);
+        using var gpuInput = device.AllocateReadWriteBuffer(input);
+        using var gpuOutput = device.AllocateReadWriteBuffer<float>(expected.Length);
 
         // Act
         this.device.For(gpuOutput.Length, new ReduceShader(binSize, gpuInput, gpuOutput));
 
         // Assert
-        float[] actual = gpuOutput.ToArray();
+        var actual = gpuOutput.ToArray();
         Assert.That(actual.Length, Is.EqualTo(expected.Length));
-        for (int i = 0; i < expected.Length; i++)
+        for (var i = 0; i < expected.Length; i++)
         {
             Assert.That(actual[i], Is.EqualTo(expected[i]).Within(1e-3), $"Mismatch at index {i}: expected {expected[i]}, got {actual[i]}");
             ;
@@ -94,26 +94,30 @@ public class ComputePipelineTests : IDisposable
     public void ZToCosShader_Is_Correct()
     {
         // Arrange
-        int length = 1024;
-        float[] input = GenerateRandomFloatArray(length);
-        float[] expected = new float[length];
-        for (int i = 0; i < length; i++)
+        var length = 1024;
+        var input = GenerateRandomFloatArray(length);
+        var expected = new float[length];
+        for (var i = 0; i < length; i++)
         {
             expected[i] = MathF.Cos(input[i]);
         }
 
-        using ReadOnlyBuffer<float> gpuInput = device.AllocateReadOnlyBuffer(input);
-        using ReadWriteBuffer<float> gpuOutput = device.AllocateReadWriteBuffer<float>(length);
+        using var gpuInput = device.AllocateReadOnlyBuffer(input);
+        using var gpuOutput = device.AllocateReadWriteBuffer<float>(length);
+
+        var context = this.device.CreateComputeContext();
 
         // Act
-        ComputePipeline.ZToCos(this.device, gpuInput, gpuOutput);
+        context.ZToCos(gpuInput, gpuOutput);
 
         // Assert
-        float[] actual = gpuOutput.ToArray();
-        for (int i = 0; i < length; i++)
+        var actual = gpuOutput.ToArray();
+        for (var i = 0; i < length; i++)
         {
             Assert.That(actual[i], Is.EqualTo(expected[i]).Within(1e-5f));
         }
+
+        context.Dispose();
     }
 
     #endregion
