@@ -6,10 +6,12 @@ public static class ComputePipeline
 {
     #region Methods
 
-    public static void ToFloat3(
-        this GraphicsDevice device,
-        ReadWriteBuffer<float> gpuBuffer,
-        ReadWriteBuffer<float3> gpuOutputBuffer)
+    public static void Reduce(this GraphicsDevice device, ReadWriteBuffer<float> gpuBuffer, ReadWriteBuffer<float> gpuOutputBuffer, int binSize)
+    {
+        device.For(gpuOutputBuffer.Length, new ReduceShader(binSize, gpuBuffer, gpuOutputBuffer));
+    }
+
+    public static void ToFloat3(this GraphicsDevice device, ReadWriteBuffer<float> gpuBuffer, ReadWriteBuffer<float3> gpuOutputBuffer)
 
     {
         device.For(gpuBuffer.Length, new ToRgb(gpuBuffer, gpuOutputBuffer));
@@ -20,12 +22,17 @@ public static class ComputePipeline
         device.For(gpuBuffer.Length, new ZToCosShader(gpuBuffer, gpuOutputBuffer));
     }
 
+    public static void ToRgb(this GraphicsDevice device, ReadWriteBuffer<float> gpuBuffer, ReadWriteBuffer<float3> gpuOutputBuffer)
+    {
+        device.For(gpuBuffer.Length, new ToRgb(gpuBuffer, gpuOutputBuffer));
+    }
+    
     #endregion
 }
 
 [ThreadGroupSize(DefaultThreadGroupSizes.X)]
 [GeneratedComputeShaderDescriptor]
-public readonly partial struct ReduceShader(int binSize, ReadOnlyBuffer<float> input, ReadWriteBuffer<float> output) : IComputeShader
+public readonly partial struct ReduceShader(int binSize, ReadWriteBuffer<float> input, ReadWriteBuffer<float> output) : IComputeShader
 {
     #region Methods
 
@@ -75,8 +82,7 @@ public readonly partial struct ToRgb(ReadWriteBuffer<float> input, ReadWriteBuff
 
         float3 phase = new(0f, 0.33f, 0.67f);
 
-        output[index] = 0.5f + 0.5f *
-            Hlsl.Cos(6.2831853f * (value + phase));
+        output[index] = 0.5f + 0.5f * Hlsl.Cos(6.2831853f * (value + phase));
     }
 
     #endregion

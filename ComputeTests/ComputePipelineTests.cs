@@ -67,7 +67,7 @@ public class ComputePipelineTests : IDisposable
             expected[i] = sum;
         }
 
-        using ReadOnlyBuffer<float> gpuInput = device.AllocateReadOnlyBuffer(input);
+        using ReadWriteBuffer<float> gpuInput = device.AllocateReadWriteBuffer(input);
         using ReadWriteBuffer<float> gpuOutput = device.AllocateReadWriteBuffer<float>(expected.Length);
 
         // Act
