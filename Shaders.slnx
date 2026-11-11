@@ -1,3 +1,5 @@
 <Solution>
+  <Project Path="Compute/Compute.csproj" />
   <Project Path="Shaders/Shaders.csproj" />
+  <Project Path="TestRunner/TestRunner.csproj" />
 </Solution>
