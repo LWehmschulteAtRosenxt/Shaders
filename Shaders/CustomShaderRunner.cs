@@ -41,7 +41,7 @@ public class CustomShaderRunner() : IShaderRunner
         context.Barrier(output);
         device.ToRgb(output, rgb);
         context.Barrier(rgb);
-        context.ForEach(texture, new DisplayShader(rgb, width));
+        context.ForEach(texture, new DisplayShader(rgb));
 
         return true;
     }
