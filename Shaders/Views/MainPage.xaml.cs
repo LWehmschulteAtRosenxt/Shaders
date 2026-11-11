@@ -1,25 +1,17 @@
-﻿using System.Reflection;
+﻿namespace Shaders.Views;
 
-namespace Shaders.Views
+using ComputeSharp.WinUI;
+
+public partial class MainPage : ContentPage
 {
-    public partial class MainPage : ContentPage
+    #region Constructors
+
+    public MainPage()
     {
-        private int _count = 0;
+        this.InitializeComponent();
 
-        public MainPage()
-        {
-            InitializeComponent();
-
-            var version = typeof(MauiApp).Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion;
-            versionLabel.Text = $".NET MAUI ver. {version?[..version.IndexOf('+')]}";
-        }
-
-        private void OnCounterClicked(object sender, EventArgs e)
-        {
-            _count++;
-            counterLabel.Text = $"Current count: {_count}";
-
-            SemanticScreenReader.Announce(counterLabel.Text);
-        }
+        this.ShaderView.ShaderRunner = new ShaderRunner<HelloWorldShader>(static elapsed => new HelloWorldShader((float)elapsed.TotalSeconds));
     }
+
+    #endregion
 }
