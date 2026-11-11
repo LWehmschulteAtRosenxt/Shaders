@@ -13,6 +13,22 @@ public class ComputePipelineTests : IDisposable
 
     #region Methods
 
+    [Test]
+    public void CanAllocate()
+    {
+        // Arrange
+        var initialX = 1_000_000;
+        var initialY = 99_000;
+
+        // Act
+        var size = initialX * initialY;
+        var actioalX = new float[size];
+        var fits = GpuHelper.TryArrayFitIntoGpu(ref actioalX);
+
+        // Assert
+        Assert.That(fits, Is.True, $"Failed to allocate array of size {size}");
+    }
+
     public void Dispose()
     {
         this.device.Dispose();
@@ -31,31 +47,6 @@ public class ComputePipelineTests : IDisposable
         return array;
     }
 
-    [SetUp]
-    public void Setup()
-    {
-        this.device = GraphicsDevice.EnumerateDevices().MaxBy(d => d.DedicatedMemorySize)
-                      ?? throw new InvalidOperationException("No suitable graphics device found.");
-    }
-
-    [Test]
-    public void CanAllocate()
-    {
-        // Arrange
-        var initialX = 10_000;
-        var initialY = 9_000;
-
-        // Act
-        for (int i = 0; i < 10000; i++)
-        {
-            var size = (initialX + i) * initialY;
-            var actioalX = new float[size];
-        }
-        
-        
-        // Assert
-    }
-
     [Test]
     public void ReduceShader_Is_Correct()
     {
@@ -72,6 +63,7 @@ public class ComputePipelineTests : IDisposable
             {
                 sum += (1f / binSize) * input[i * binSize + j];
             }
+
             expected[i] = sum;
         }
 
@@ -86,10 +78,18 @@ public class ComputePipelineTests : IDisposable
         Assert.That(actual.Length, Is.EqualTo(expected.Length));
         for (int i = 0; i < expected.Length; i++)
         {
-            Assert.That(actual[i], Is.EqualTo(expected[i]).Within(1e-3), $"Mismatch at index {i}: expected {expected[i]}, got {actual[i]}");;
+            Assert.That(actual[i], Is.EqualTo(expected[i]).Within(1e-3), $"Mismatch at index {i}: expected {expected[i]}, got {actual[i]}");
+            ;
         }
     }
-    
+
+    [SetUp]
+    public void Setup()
+    {
+        this.device = GraphicsDevice.EnumerateDevices().MaxBy(d => d.DedicatedMemorySize)
+                      ?? throw new InvalidOperationException("No suitable graphics device found.");
+    }
+
     [Test]
     public void ZToCosShader_Is_Correct()
     {
