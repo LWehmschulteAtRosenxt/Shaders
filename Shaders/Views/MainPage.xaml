@@ -11,13 +11,19 @@
              x:DataType="viewModels:MainPageViewModel"
              Padding="24"
              mc:Ignorable="d">
-  <Grid RowDefinitions="Auto, *" RowSpacing="16">
+  <Grid RowDefinitions="Auto, Auto, *" RowSpacing="16">
     <Picker Grid.Row="0"
             HorizontalOptions="Center"
             ItemDisplayBinding="{Binding Name, x:DataType=compute:GraphicsDevice}"
             ItemsSource="{Binding GraphicsDevices}"
             SelectedItem="{Binding SelectedGraphicsDevice}" />
-    <controls:AnimatedComputeShaderView Grid.Row="1"
+    <StackLayout Grid.Row="1" Orientation="Horizontal">
+      <Button Command="{Binding PickImageCommand}" Text="Choose File" />
+      <Label FontAttributes="Italic"
+             Text="{Binding ImageSource}"
+             TextColor="LightGray" />
+    </StackLayout>
+    <controls:AnimatedComputeShaderView Grid.Row="2"
                                         GraphicsDevice="{Binding SelectedGraphicsDevice}"
                                         HorizontalOptions="Fill"
                                         ShaderRunner="{Binding ShaderRunner}"
