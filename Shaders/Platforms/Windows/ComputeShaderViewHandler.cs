@@ -11,28 +11,29 @@ public sealed class ComputeShaderViewHandler() : ViewHandler<ComputeShaderView, 
 {
     #region Fields
 
+    private FrameRequestQueue? frameRequests;
+
+    private GraphicsDevice? graphicsDevice;
+
     private static readonly IPropertyMapper<ComputeShaderView, ComputeShaderViewHandler> Mapper =
         new PropertyMapper<ComputeShaderView, ComputeShaderViewHandler>(ViewHandler.ViewMapper)
         {
-            [nameof(ComputeShaderView.ShaderRunner)] = MapShaderRunner,
-            [nameof(ComputeShaderView.GraphicsDevice)] = MapGraphicsDevice
+            [nameof(ComputeShaderView.ShaderRunner)] = MapShaderRunner, [nameof(ComputeShaderView.GraphicsDevice)] = MapGraphicsDevice
         };
 
     private ComputeShaderPanel? shaderPanel;
-    private GraphicsDevice? graphicsDevice;
-    private FrameRequestQueue? frameRequests;
 
     #endregion
 
     #region Methods
-
-    protected override Grid CreatePlatformView() => new();
 
     protected override void ConnectHandler(Grid platformView)
     {
         base.ConnectHandler(platformView);
         this.VirtualView.FrameRequested += this.OnFrameRequested;
     }
+
+    protected override Grid CreatePlatformView() => new();
 
     protected override void DisconnectHandler(Grid platformView)
     {
@@ -64,13 +65,13 @@ public sealed class ComputeShaderViewHandler() : ViewHandler<ComputeShaderView, 
 
         var frameRequests = new FrameRequestQueue();
         var newPanel = new ComputeShaderPanel(graphicsDevice)
-        {
-            IsDynamicResolutionEnabled = false,
-            IsVerticalSyncEnabled = true,
-            ResolutionScale = 1.0,
-            FrameRequestQueue = frameRequests,
-            ShaderRunner = view.ShaderRunner
-        };
+                       {
+                           IsDynamicResolutionEnabled = false,
+                           IsVerticalSyncEnabled = true,
+                           ResolutionScale = 1.0,
+                           FrameRequestQueue = frameRequests,
+                           ShaderRunner = view.ShaderRunner
+                       };
 
         newPanel.Loaded += handler.OnPanelLoaded;
         newPanel.SizeChanged += handler.OnPanelSizeChanged;

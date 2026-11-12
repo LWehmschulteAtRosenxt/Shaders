@@ -6,6 +6,8 @@ using ComputeSharp;
 [GeneratedComputeShaderDescriptor]
 public readonly partial struct RandomShader(ReadWriteBuffer<float> output) : IComputeShader
 {
+    #region Methods
+
     public void Execute()
     {
         var index = ThreadIds.X;
@@ -16,4 +18,6 @@ public readonly partial struct RandomShader(ReadWriteBuffer<float> output) : ICo
 
         output[index] = (state >> 8) * (1f / 16777216f);
     }
+
+    #endregion
 }

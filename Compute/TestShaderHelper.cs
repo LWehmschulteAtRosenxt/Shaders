@@ -4,6 +4,7 @@ using ComputeSharp;
 
 public static partial class TestShaderHelper
 {
+    #region Methods
 
     public static void FullyForwardTestShader(
         GraphicsDevice device,
@@ -17,8 +18,9 @@ public static partial class TestShaderHelper
         ReadWriteBuffer<float> outb)
     {
         device.For(c, n, b, new TestShader(n, m, b, xb, yb, zb, outb));
-
     }
+
+    #endregion
 
     [ThreadGroupSize(DefaultThreadGroupSizes.XYZ)]
     [GeneratedComputeShaderDescriptor]

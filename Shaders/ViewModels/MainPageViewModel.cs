@@ -1,10 +1,8 @@
 namespace Shaders.ViewModels;
 
 using System.ComponentModel;
-using System.Windows.Input;
 using Compute;
 using ComputeSharp;
-using ComputeSharp.WinUI;
 
 public sealed class MainPageViewModel : INotifyPropertyChanged
 {
@@ -12,18 +10,11 @@ public sealed class MainPageViewModel : INotifyPropertyChanged
 
     public List<GraphicsDevice> GraphicsDevices { get; } = new(GraphicsDevice.EnumerateDevices());
 
-    public string? ImageSource { get; set => this.NotifyPropertyChanged(this.PropertyChanged, ref field, value); }
-
-    public GraphicsDevice? SelectedGraphicsDevice
+    public string? ImageSource
     {
         get;
         set => this.NotifyPropertyChanged(this.PropertyChanged, ref field, value);
-    } = GraphicsDevice.GetDefault();
-
-    public CustomShaderRunner? ShaderRunner { get; } = new()
-                                                  {
-                                                      NeighborDistance = 0
-                                                  };
+    }
 
     public int NeighborDistance
     {
@@ -39,6 +30,14 @@ public sealed class MainPageViewModel : INotifyPropertyChanged
             this.NotifyPropertyChanged(this.PropertyChanged, ref field, value);
         }
     }
+
+    public GraphicsDevice? SelectedGraphicsDevice
+    {
+        get;
+        set => this.NotifyPropertyChanged(this.PropertyChanged, ref field, value);
+    } = GraphicsDevice.GetDefault();
+
+    public CustomShaderRunner? ShaderRunner { get; } = new() { NeighborDistance = 0 };
 
     #endregion
 

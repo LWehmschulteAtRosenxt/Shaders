@@ -4,10 +4,10 @@ using ComputeSharp;
 
 public static class ComputePipeline
 {
-    #region Methods
-
     extension(ref ComputeContext context)
     {
+        #region Methods
+
         public void Reduce(ReadWriteBuffer<float> gpuBuffer, ReadWriteBuffer<float> gpuOutputBuffer, int binSize)
         {
             context.For(gpuOutputBuffer.Length, new ReduceShader(binSize, gpuBuffer, gpuOutputBuffer));
@@ -19,18 +19,18 @@ public static class ComputePipeline
             context.For(gpuBuffer.Length, new ToRgb(gpuBuffer, gpuOutputBuffer));
         }
 
+        public void ToRgb(ReadWriteBuffer<float> gpuBuffer, ReadWriteBuffer<float3> gpuOutputBuffer)
+        {
+            context.For(gpuBuffer.Length, new ToRgb(gpuBuffer, gpuOutputBuffer));
+        }
+
         public void ZToCos(ReadOnlyBuffer<float> gpuBuffer, ReadWriteBuffer<float> gpuOutputBuffer)
         {
             context.For(gpuBuffer.Length, new ZToCosShader(gpuBuffer, gpuOutputBuffer));
         }
 
-        public void ToRgb(ReadWriteBuffer<float> gpuBuffer, ReadWriteBuffer<float3> gpuOutputBuffer)
-        {
-            context.For(gpuBuffer.Length, new ToRgb(gpuBuffer, gpuOutputBuffer));
-        }
+        #endregion
     }
-
-    #endregion
 }
 
 [ThreadGroupSize(DefaultThreadGroupSizes.X)]

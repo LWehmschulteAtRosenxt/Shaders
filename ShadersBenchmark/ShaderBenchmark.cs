@@ -6,21 +6,21 @@ using ComputeSharp;
 
 public class ShaderBenchmark
 {
-    private const int width = 1920;
-    private const int height = 100;
-    private const int scale = 4;
-    
-    private float[] data = Array.Empty<float>();
-    private float[] output = Array.Empty<float>();
-    
+    #region Fields
 
-    [GlobalSetup]
-    public void Setup()
-    {
-        this.data = GpuHelper.GetInitialData(width * scale, height * scale).ToArray();
-        this.output = new float[width * height];
-        Array.Fill(this.output, 0f);
-    }
+    private float[] data = Array.Empty<float>();
+
+    private const int height = 100;
+
+    private float[] output = Array.Empty<float>();
+
+    private const int scale = 4;
+
+    private const int width = 1920;
+
+    #endregion
+
+    #region Methods
 
     [Benchmark]
     public void Cpu()
@@ -54,4 +54,14 @@ public class ShaderBenchmark
         context.Dispose();
         _ = gpuOutput.ToArray();
     }
+
+    [GlobalSetup]
+    public void Setup()
+    {
+        this.data = GpuHelper.GetInitialData(width * scale, height * scale).ToArray();
+        this.output = new float[width * height];
+        Array.Fill(this.output, 0f);
+    }
+
+    #endregion
 }

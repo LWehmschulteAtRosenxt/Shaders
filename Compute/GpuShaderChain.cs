@@ -4,12 +4,9 @@ using ComputeSharp;
 
 public static partial class GpuShaderChain
 {
-    public static void AddThenMultiply(
-        GraphicsDevice device,
-        ReadOnlyBuffer<float> input,
-        ReadWriteBuffer<float> output,
-        float addend,
-        float multiplier)
+    #region Methods
+
+    public static void AddThenMultiply(GraphicsDevice device, ReadOnlyBuffer<float> input, ReadWriteBuffer<float> output, float addend, float multiplier)
     {
         if (input.Length != output.Length)
         {
@@ -27,14 +24,14 @@ public static partial class GpuShaderChain
         device.For(input.Length, new MultiplyStageShader(input.Length, multiplier, intermediate, output));
     }
 
+    #endregion
+
     [ThreadGroupSize(DefaultThreadGroupSizes.X)]
     [GeneratedComputeShaderDescriptor]
-    public readonly partial struct AddStageShader(
-        int length,
-        float addend,
-        ReadOnlyBuffer<float> input,
-        ReadWriteBuffer<float> intermediate) : IComputeShader
+    public readonly partial struct AddStageShader(int length, float addend, ReadOnlyBuffer<float> input, ReadWriteBuffer<float> intermediate) : IComputeShader
     {
+        #region Methods
+
         public void Execute()
         {
             int index = ThreadIds.X;
@@ -44,16 +41,17 @@ public static partial class GpuShaderChain
                 intermediate[index] = input[index] + addend;
             }
         }
+
+        #endregion
     }
 
     [ThreadGroupSize(DefaultThreadGroupSizes.X)]
     [GeneratedComputeShaderDescriptor]
-    public readonly partial struct MultiplyStageShader(
-        int length,
-        float multiplier,
-        ReadWriteBuffer<float> intermediate,
-        ReadWriteBuffer<float> output) : IComputeShader
+    public readonly partial struct MultiplyStageShader(int length, float multiplier, ReadWriteBuffer<float> intermediate, ReadWriteBuffer<float> output)
+        : IComputeShader
     {
+        #region Methods
+
         public void Execute()
         {
             int index = ThreadIds.X;
@@ -63,5 +61,7 @@ public static partial class GpuShaderChain
                 output[index] = intermediate[index] * multiplier;
             }
         }
+
+        #endregion
     }
 }

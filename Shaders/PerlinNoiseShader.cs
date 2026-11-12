@@ -6,6 +6,8 @@ using ComputeSharp;
 [GeneratedComputeShaderDescriptor]
 public readonly partial struct PerlinNoiseShader(int distance, ReadWriteBuffer<float> input, ReadWriteBuffer<float> output) : IComputeShader
 {
+    #region Methods
+
     public void Execute()
     {
         var neighborTotal = 0f;
@@ -25,7 +27,6 @@ public readonly partial struct PerlinNoiseShader(int distance, ReadWriteBuffer<f
 
                 neighborTotal += input[neighborIndex];
                 neighborCount++;
-
             }
         }
 
@@ -33,4 +34,6 @@ public readonly partial struct PerlinNoiseShader(int distance, ReadWriteBuffer<f
         var cellIndex = ThreadIds.X + (ThreadIds.Y * DispatchSize.X);
         output[cellIndex] = average;
     }
+
+    #endregion
 }
