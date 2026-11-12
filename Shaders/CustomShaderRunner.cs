@@ -1,5 +1,6 @@
-﻿namespace Compute;
+﻿namespace Shaders;
 
+using Compute;
 using ComputeSharp;
 using ComputeSharp.WinUI;
 
@@ -33,11 +34,11 @@ public class CustomShaderRunner() : IShaderRunner
         context.Barrier(intermediat);
         context.Reduce(intermediat, output, scale);
         context.Barrier(output);
-        context.For(width, height, new PerlinNoiseShader(this.NeighborDistance, output, perlinNoise));
+        context.ApplyPerlinNoise(this.NeighborDistance, width, height, output, perlinNoise);
         context.Barrier(perlinNoise);
         context.ToRgb(perlinNoise, rgb);
         context.Barrier(rgb);
-        context.ForEach(texture, new DisplayShader(rgb));
+        context.Display(rgb, texture);
         context.Dispose();
 
         return true;

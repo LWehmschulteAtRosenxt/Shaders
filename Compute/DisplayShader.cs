@@ -1,14 +1,18 @@
-﻿namespace Shaders;
+﻿namespace Compute;
 
 using ComputeSharp;
 
-public class DisplayShader(ReadWriteBuffer<float3> buffer) : IComputeShader<float4>
+[ThreadGroupSize(DefaultThreadGroupSizes.XY)]
+[GeneratedComputeShaderDescriptor]
+public readonly partial struct DisplayShader(ReadWriteBuffer<float3> buffer) : IComputeShader<float4>
 {
     #region Methods
 
     public float4 Execute()
     {
-        return new float4();
+        var index = ThreadIds.X + (ThreadIds.Y * DispatchSize.X);
+        var sourceColor = buffer[index];
+        return new float4(sourceColor, 1f);
     }
 
     #endregion

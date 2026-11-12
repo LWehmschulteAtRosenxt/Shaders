@@ -1,4 +1,4 @@
-﻿namespace Shaders;
+﻿namespace Compute;
 
 using ComputeSharp;
 

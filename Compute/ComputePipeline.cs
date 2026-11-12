@@ -8,6 +8,16 @@ public static class ComputePipeline
     {
         #region Methods
 
+        public void ApplyPerlinNoise(int distance, int width, int height, ReadWriteBuffer<float> gpuBuffer, ReadWriteBuffer<float> gpuOutputBuffer)
+        {
+            context.For(width, height, new PerlinNoiseShader(distance, gpuBuffer, gpuOutputBuffer));
+        }
+
+        public void Display(ReadWriteBuffer<float3> gpuBuffer, IReadWriteNormalizedTexture2D<float4> texture)
+        {
+            context.ForEach(texture, new DisplayShader(gpuBuffer));
+        }
+
         public void Reduce(ReadWriteBuffer<float> gpuBuffer, ReadWriteBuffer<float> gpuOutputBuffer, int binSize)
         {
             context.For(gpuOutputBuffer.Length, new ReduceShader(binSize, gpuBuffer, gpuOutputBuffer));
